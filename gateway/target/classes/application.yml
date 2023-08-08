@@ -1,0 +1,24 @@
+server:
+  port: 10010
+spring:
+  application:
+    name: gateway
+
+  cloud:
+    nacos:
+      server-addr: 192.168.50.225:8848
+      discovery:
+        cluster-name: hz
+    gateway:
+      routes:  #网关路由配置
+        - id: user-server #路由id，自定义，只要唯一即可
+          uri: lb://user-server #路由的目标位置
+          predicates: # 路由断言，也就是判断请求是否符合路由规则的条件
+            - Path=/user/** # 路径断言 这个是按照路径匹配，只要以/user/开头就符合要求
+          filters:
+            - AddRequestHeader=user, testName
+        - id: order-server
+          uri: lb://order-server
+          predicates:
+            - Path=/order/**
+
